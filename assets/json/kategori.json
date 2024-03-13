@@ -1,0 +1,100 @@
+{
+  "tema": [
+    {
+      "imgUrl": "assets/img/pexels-ben-mack-5326925.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "Genel",
+      "aciklama": "Çeşitli kategorilerden olumlamala1r"
+    },
+    {
+      "imgUrl": "assets/img/pexels-adedamola-adetoyi-17879308.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "Genel",
+      "aciklama": "Çeşitli kategorilerden olumlamalar2"
+    }
+  ],
+  "canli": [
+    {
+      "imgUrl": "assets/img/pexels-leah-newhouse-20204362.jpg",
+      "photoAciklama": "Parlak Ay Gökyüzü",
+      "name": "GenelCnli",
+      "aciklama": "Çeşitli kategorilerden olumlamalar"
+    },
+    {
+      "imgUrl": "assets/img/pexels-adedamola-adetoyi-17879308.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "Genel",
+      "aciklama": "Çeşitli kategorilerden olumlamalar"
+    }
+  ],
+  "sesler": [
+    {
+      "imgUrl": "assets/img/pexels-mark-yu-18178746.jpg",
+      "photoAciklama": "Parlak Ay Gökyüzü",
+      "name": "Zen",
+      "aciklama": "Çeşitli kategorilerden olumlamalar"
+    },
+    {
+      "imgUrl": "assets/img/pexels-adedamola-adetoyi-17879308.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "Kase",
+      "aciklama": "Çeşitli kategorilerden olumlamalar"
+    },
+    {
+      "imgUrl": "assets/img/pexels-adedamola-adetoyi-17879308.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "Kase",
+      "aciklama": "Çeşitli kxategorilerden olumlamalar"
+    }
+  ],
+  "kategori": [
+    {
+      "imgUrl": "assets/img/pexels-adedamola-adetoyi-17879308.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "kategoriName1",
+      "aciklama": "KategoriAçıklama"
+    },
+    {
+      "imgUrl": "assets/img/pexels-ben-mack-5326925.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "kategoriName2",
+      "aciklama": "KategoriAçıklama"
+    },
+    {
+      "imgUrl": "assets/img/pexels-leah-newhouse-20204362.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "kategoriName3",
+      "aciklama": "KategoriAçıklama"
+    },
+    {
+      "imgUrl": "assets/img/pexels-mark-yu-18178746.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "kategoriName4",
+      "aciklama": "KategoriAçıklama"
+    },
+    {
+      "imgUrl": "assets/img/pexels-adedamola-adetoyi-17879308.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "kategoriName1",
+      "aciklama": "KategoriAçıklama"
+    },
+    {
+      "imgUrl": "assets/img/pexels-ben-mack-5326925.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "kategoriName2",
+      "aciklama": "KategoriAçıklama"
+    },
+    {
+      "imgUrl": "assets/img/pexels-leah-newhouse-20204362.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "kategoriName3",
+      "aciklama": "KategoriAçıklama"
+    },
+    {
+      "imgUrl": "assets/img/pexels-mark-yu-18178746.jpg",
+      "photoAciklama": "Kayık Adam",
+      "name": "kategoriName4",
+      "aciklama": "KategoriAçıklama"
+    }
+  ]
+}
