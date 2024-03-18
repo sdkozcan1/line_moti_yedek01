@@ -3,25 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mor_motti_01/category.dart';
+import 'package:mor_motti_01/favoritPage.dart';
 import 'package:mor_motti_01/jsonModel.dart';
 import 'package:mor_motti_01/splashScreen.dart';
 import 'package:page_transition/page_transition.dart';
 
-var textAndkategoriMap = [
-  {"id": "1", "kategori": "ktg1", "text": "text1"},
-  {"id": "2", "kategori": "ktg2", "text": "text2"},
-  {"id": "3", "kategori": "ktg3", "text": "text3"},
+final List<Map<String, dynamic>> Textlist = [
+  {"id": 1, "text": "text1", "kategori": "ktg1"},
+  {"id": 2, "text": "text2", "kategori": "ktg2"},
+  {"id": 3, "text": "text3", "kategori": "ktg3"},
+  {"id": 4, "text": "text4", "kategori": "ktg4"},
 ];
-const textAndkategoriBox = 'textAndkategori_box';
-const favoriTextBox = "favoriText_box";
+
+const textFavoriBox = "favoriBox";
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await Hive.openBox(textAndkategoriBox);
-  var favoriBox = Hive.box(textAndkategoriBox);
-  await favoriBox.putAll(textAndkategoriMap
-      .asMap()
-      .map((key, value) => MapEntry(key.toString(), value)));
+  await Hive.openBox(textFavoriBox);
   runApp(MaterialApp(
     initialRoute: '/splash',
     routes: {
@@ -42,14 +39,48 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late Future<MyData> futureData;
-  late Box favoriteTextBox;
 
   @override
   void initState() {
     super.initState();
-    favoriteTextBox = Hive.box(textAndkategoriBox);
 
+    /* Json datası */
     futureData = loadMyData();
+    /* ------------------------ */
+  }
+
+  int currentIndex = 0;
+
+/* mix Text */
+  mixText() {
+    if (currentIndex < Textlist.length - 1) {
+      currentIndex++;
+    } else {
+      currentIndex = 0;
+    }
+  }
+
+/* ------------------------ ----------------  */
+
+/* -------- */
+
+  Widget getIcon(int index) {
+    var box = Hive.box(textFavoriBox);
+    if (box.containsKey(currentIndex)) {
+      return Icon(Icons.favorite, color: Colors.red);
+    }
+    return Icon(Icons.favorite_border);
+  }
+
+  void onFavoritePress(int index) {
+    if (box.containsKey(currentIndex)) {
+      box.delete(currentIndex);
+      print("delete:${currentIndex}: \n ${Textlist[currentIndex]}");
+
+      return;
+    }
+    box.put(index, Textlist[currentIndex]);
+    print("put :${currentIndex}: \n ${Textlist[currentIndex]}");
   }
 
   String kategoriName = "tema";
@@ -66,28 +97,11 @@ class _MainPageState extends State<MainPage> {
     'Pacifico'
   ];
 
-  var index = 0;
-  changeTex() {
-    if (index < textAndkategoriMap.length - 1) {
-      ++index;
-      print("index artıyor ${index}");
-    } else {
-      index = 0;
-      print("index 1 ${index}");
-    }
-  }
-
-  var favoriBox = Hive.box(textAndkategoriBox);
-
   @override
   Widget build(BuildContext context) {
     /* Cihazın Sizenı Almak İÇin olan Kod */
     final screenSize = MediaQuery.of(context).size;
     /* ------------------ */
-
-    var textAndkategoriMapItem = favoriBox.values.firstWhere(
-        (element) => element['id'] == (index + 1).toString(),
-        orElse: () => null);
 
     return MaterialApp(
       home: Scaffold(
@@ -143,7 +157,7 @@ class _MainPageState extends State<MainPage> {
                                 ),
                                 TextSpan(
                                   text:
-                                      "\n   ${textAndkategoriMapItem["text"]} ",
+                                      "\n    ${Textlist[currentIndex]["text"]}",
                                 ),
                               ],
                             ),
@@ -157,9 +171,8 @@ class _MainPageState extends State<MainPage> {
                             IconButton(
                               onPressed: () {
                                 setState(() {
-                                  print("tıklandı");
                                   /* Motivasyon textini değiştiren fonksiyon */
-                                  changeTex();
+                                  mixText();
                                 });
                               },
                               icon: ImageIcon(
@@ -176,7 +189,7 @@ class _MainPageState extends State<MainPage> {
                                         context,
                                         PageTransition(
                                           type: PageTransitionType.rightToLeft,
-                                          child: Container(),
+                                          child: FavoritePage(),
                                         ),
                                       );
                                     },
@@ -186,14 +199,14 @@ class _MainPageState extends State<MainPage> {
                                     ),
                                   ),
                                   IconButton(
-                                      onPressed: () {
-                                        /* Hive veri ekleme favori */
-                                        print(favoriBox.length);
-                                      },
-                                      icon: Icon(
-                                        Icons.favorite,
-                                        color: Colors.white,
-                                      ))
+                                    onPressed: () {
+                                      setState(() {
+                                        onFavoritePress(currentIndex);
+                                      });
+                                    },
+                                    icon: getIcon(currentIndex),
+                                    color: Colors.white,
+                                  ),
                                 ],
                               ),
                             )
