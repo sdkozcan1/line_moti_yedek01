@@ -1,7 +1,9 @@
 import 'dart:ui';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mor_motti_01/category.dart';
 import 'package:mor_motti_01/favoritPage.dart';
 import 'package:mor_motti_01/jsonModel.dart';
@@ -16,7 +18,7 @@ final List<Map<String, dynamic>> Textlist = [
 ];
 
 const textFavoriBox = "favoriBox";
-Future<void> main() async {
+void main() async {
   await Hive.initFlutter();
   await Hive.openBox(textFavoriBox);
   runApp(MaterialApp(
@@ -37,22 +39,47 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late AnimationController controller;
+
   late Future<MyData> futureData;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(vsync: this);
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          print("Animasyon bittiiiiiiii iiiiiiiiii iiiiiiiiiiiiiii iiiii");
+          mixText();
+          controller.reverse();
+
+          _animationController
+            ..duration = Duration(seconds: 5)
+            ..reverse();
+        });
+      }
+    });
 
     /* Json datası */
     futureData = loadMyData();
     /* ------------------------ */
   }
 
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   int currentIndex = 0;
+  bool animate = true;
 
 /* mix Text */
   mixText() {
+    animate = !animate;
     if (currentIndex < Textlist.length - 1) {
       currentIndex++;
     } else {
@@ -64,6 +91,7 @@ class _MainPageState extends State<MainPage> {
 
 /* -------- */
 
+/* icon fav durumu */
   Widget getIcon(int index) {
     var box = Hive.box(textFavoriBox);
     if (box.containsKey(currentIndex)) {
@@ -83,6 +111,31 @@ class _MainPageState extends State<MainPage> {
     print("put :${currentIndex}: \n ${Textlist[currentIndex]}");
   }
 
+/* ---------------------- */
+
+/* Olumlama Animasyon fonksiyonları */
+  _handlePlayAnimationReverse() {
+    // animasyon bitmiş mi diye kontrol ediyoruz
+
+    // eğer bitmişse ve tekrardan butona basmışsak animasyonu tersten oynatıyoruz
+    _animationController
+      ..duration = Duration(seconds: 5)
+      ..reverse();
+
+    print("reverse");
+  }
+
+  _handlePlayAnimationForward() {
+    // eğer bitmemişse ve butona basmışsak animasyonu ileri doğru oynatıyoruz
+
+    _animationController
+      ..duration = Duration(seconds: 5)
+      ..forward();
+
+    print("forward");
+  }
+
+  /* ---------- */
   String kategoriName = "tema";
   var fontName = [
     'ABeeZee',
@@ -143,27 +196,52 @@ class _MainPageState extends State<MainPage> {
                         /* Main page motivasyon Textt */
 
                         Center(
-                          child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              text: '05 ',
-                              style: GoogleFonts.aboreto(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 20),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '\n MAR 2024',
-                                ),
-                                TextSpan(
-                                  text:
-                                      "\n    ${Textlist[currentIndex]["text"]}",
-                                ),
-                              ],
+                          child: FadeOut(
+                            manualTrigger: true,
+                            duration: Duration(milliseconds: 100),
+                            animate: animate,
+                            controller: (animationCtrl) =>
+                                controller = animationCtrl,
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                text: '05 ',
+                                style: GoogleFonts.aboreto(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 20),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: '\n MAR 2024',
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        "\n    ${Textlist[currentIndex]["text"]}",
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-
+                        /* Animasyon Motivasyon texti değiştiriyor */
+                        Container(
+                          width: 300,
+                          height: 300,
+                          child: GestureDetector(
+                            onLongPressUp: () {
+                              _handlePlayAnimationReverse();
+                              controller.reverse();
+                            },
+                            onLongPress: () {
+                              _handlePlayAnimationForward();
+                              controller.forward();
+                            },
+                            child: Lottie.asset(
+                              "assets/animate/olumlama.json",
+                              controller: _animationController,
+                            ),
+                          ),
+                        ),
                         /* MAIN PAGE 3 ICON */
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
