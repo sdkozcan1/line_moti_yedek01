@@ -11,11 +11,16 @@ import 'package:mor_motti_01/splashScreen.dart';
 import 'package:page_transition/page_transition.dart';
 
 final List<Map<String, dynamic>> Textlist = [
-  {"id": 1, "text": "text1", "kategori": "ktg1"},
-  {"id": 2, "text": "text2", "kategori": "ktg2"},
-  {"id": 3, "text": "text3", "kategori": "ktg3"},
-  {"id": 4, "text": "text4", "kategori": "ktg4"},
+  {"id": 1, "text": "text1", "kategori": "kategoriName1"},
+  {"id": 2, "text": "text2", "kategori": "kategoriName2"},
+  {"id": 3, "text": "text3", "kategori": "kategoriName3"},
+  {"id": 4, "text": "text4", "kategori": "kategoriName4"},
+  {"id": 5, "text": "text1.1", "kategori": "kategoriName1"},
+  {"id": 6, "text": "text2.1", "kategori": "kategoriName2"},
+  {"id": 7, "text": "text2.2", "kategori": "kategoriName2"},
+  {"id": 8, "text": "text4.1", "kategori": "kategoriName4"},
 ];
+var kategoriName = "kategoriName1";
 
 const textFavoriBox = "favoriBox";
 void main() async {
@@ -25,7 +30,9 @@ void main() async {
     initialRoute: '/splash',
     routes: {
       '/splash': (context) => SplashScreen(),
-      '/home': (context) => MainPage(),
+      '/home': (context) => MainPage(
+            kategoriNameee: kategoriName,
+          ),
 
       // Add other routes for your app screens here
     },
@@ -33,33 +40,48 @@ void main() async {
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final String kategoriNameee;
+
+  const MainPage({super.key, required this.kategoriNameee});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
-  late final AnimationController _animationController;
+  late AnimationController _animationController;
   late AnimationController controller;
-
   late Future<MyData> futureData;
+  int currentIndex = 0;
+  bool animate = true;
+  String temaName = "tema";
+  var listLength = 0;
+  var filterText = [];
+  var fontName = [
+    'ABeeZee',
+    'Acme',
+    'Advent Pro',
+    'Alata',
+    'Allan',
+    'Amatic SC',
+    'Anton',
+    'Archivo',
+    'Arvo',
+    'Pacifico'
+  ];
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this);
-    _animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
+    controller = AnimationController(vsync: this);
+    _animationController.addListener(() {
+      if (_animationController.status == AnimationStatus.completed) {
+        // FadeOut animasyonu ileri yönde tamamlandığında txt değiştir
         setState(() {
-          print("Animasyon bittiiiiiiii iiiiiiiiii iiiiiiiiiiiiiii iiiii");
           mixText();
-          controller.reverse();
-
-          _animationController
-            ..duration = Duration(seconds: 5)
-            ..reverse();
         });
+        // Reverse animasyonu başlat
       }
     });
 
@@ -74,24 +96,28 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  int currentIndex = 0;
-  bool animate = true;
-
-/* mix Text */
+/* ---------------------- mix Text -----------*/
   mixText() {
-    animate = !animate;
-    if (currentIndex < Textlist.length - 1) {
-      currentIndex++;
-    } else {
-      currentIndex = 0;
-    }
+    setState(() {
+      String currentCategory = Textlist[currentIndex]["kategori"];
+      int categoryLength =
+          Textlist.where((item) => item["kategori"] == kategoriName).length;
+      print(Textlist.where((item) => item["kategori"] == kategoriName));
+      /*  print(
+          Textlist.where((item) => item["kategori"] == currentCategory).length); */
+      if (currentIndex < categoryLength - 1) {
+        currentIndex++;
+        print(currentIndex);
+      } else {
+        currentIndex = 0;
+      }
+    });
   }
 
-/* ------------------------ ----------------  */
+/* -----------------------------------------*/
 
-/* -------- */
+/* -----------icon fav durumu -----------*/
 
-/* icon fav durumu */
   Widget getIcon(int index) {
     var box = Hive.box(textFavoriBox);
     if (box.containsKey(currentIndex)) {
@@ -111,44 +137,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     print("put :${currentIndex}: \n ${Textlist[currentIndex]}");
   }
 
-/* ---------------------- */
+/* --------------------------------- */
 
-/* Olumlama Animasyon fonksiyonları */
-  _handlePlayAnimationReverse() {
-    // animasyon bitmiş mi diye kontrol ediyoruz
+/* ---------- Lotti Animasyon ---------- */
 
-    // eğer bitmişse ve tekrardan butona basmışsak animasyonu tersten oynatıyoruz
+  onForward() {
     _animationController
-      ..duration = Duration(seconds: 5)
-      ..reverse();
-
-    print("reverse");
-  }
-
-  _handlePlayAnimationForward() {
-    // eğer bitmemişse ve butona basmışsak animasyonu ileri doğru oynatıyoruz
-
-    _animationController
-      ..duration = Duration(seconds: 5)
+      ..duration = Duration(seconds: 2)
       ..forward();
-
-    print("forward");
   }
 
-  /* ---------- */
-  String kategoriName = "tema";
-  var fontName = [
-    'ABeeZee',
-    'Acme',
-    'Advent Pro',
-    'Alata',
-    'Allan',
-    'Amatic SC',
-    'Anton',
-    'Archivo',
-    'Arvo',
-    'Pacifico'
-  ];
+  onReverse() {
+    _animationController
+      ..duration = Duration(seconds: 2)
+      ..reverse();
+  }
+
+/* ------------- ----------- ------  */
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +174,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   fit: BoxFit.cover,
                 ),
               ),
+
               /* ANASAYFANIN ÜSTÜNE GELEN SİYAH TRANSPARAN. YAZININ DAHA İYİ OKUNMASI İÇİN */
 
               child: BackdropFilter(
@@ -195,33 +201,93 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         ),
                         /* Main page motivasyon Textt */
 
-                        Center(
-                          child: FadeOut(
-                            manualTrigger: true,
-                            duration: Duration(milliseconds: 100),
-                            animate: animate,
-                            controller: (animationCtrl) =>
-                                controller = animationCtrl,
-                            child: RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                text: '05 ',
-                                style: GoogleFonts.aboreto(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 20),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: '\n MAR 2024',
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        "\n    ${Textlist[currentIndex]["text"]}",
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        Container(
+                          child: FadeIn(
+                              /* manualTrigger: true,
+                              controller: (animationCtrl) =>
+                                  controller = animationCtrl, */
+                              child: kategoriName == "kategoriName1"
+                                  ? RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        text: '05 ',
+                                        style: GoogleFonts.aboreto(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 20),
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                            text: '\n MAR 2024',
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                "\n    ${Textlist.where((element) => element["kategori"] == "kategoriName1").toList()[currentIndex]["text"]}",
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : kategoriName == "kategoriName2"
+                                      ? RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                            text: '05 ',
+                                            style: GoogleFonts.aboreto(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 20),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: '\n MAR 2024',
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    "\n    ${Textlist.where((element) => element["kategori"] == "kategoriName2").toList()[currentIndex]["text"]}",
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : kategoriName == "kategoriName3"
+                                          ? RichText(
+                                              textAlign: TextAlign.center,
+                                              text: TextSpan(
+                                                text: '05 ',
+                                                style: GoogleFonts.aboreto(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    fontSize: 20),
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                    text: '\n MAR 2024',
+                                                  ),
+                                                  TextSpan(
+                                                    text:
+                                                        "\n    ${Textlist.where((element) => element["kategori"] == "kategoriName3").toList()[currentIndex]["text"]}",
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : kategoriName == "kategoriName4"
+                                              ? RichText(
+                                                  textAlign: TextAlign.center,
+                                                  text: TextSpan(
+                                                    text: '05 ',
+                                                    style: GoogleFonts.aboreto(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                        fontSize: 20),
+                                                    children: <TextSpan>[
+                                                      TextSpan(
+                                                        text: '\n MAR 2024',
+                                                      ),
+                                                      TextSpan(
+                                                        text:
+                                                            "\n    ${Textlist.where((element) => element["kategori"] == "kategoriName4").toList()[currentIndex]["text"]}",
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : Text("data")),
                         ),
                         /* Animasyon Motivasyon texti değiştiriyor */
                         Container(
@@ -229,12 +295,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           height: 300,
                           child: GestureDetector(
                             onLongPressUp: () {
-                              _handlePlayAnimationReverse();
-                              controller.reverse();
+                              controller.forward();
+                              onReverse();
                             },
                             onLongPress: () {
-                              _handlePlayAnimationForward();
-                              controller.forward();
+                              controller.reverse();
+                              onForward();
                             },
                             child: Lottie.asset(
                               "assets/animate/olumlama.json",
@@ -250,6 +316,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               onPressed: () {
                                 setState(() {
                                   /* Motivasyon textini değiştiren fonksiyon */
+                                  /*    controller.reset();
+                                  controller.forward(); */
                                   mixText();
                                 });
                               },
@@ -262,14 +330,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               child: Row(
                                 children: [
                                   IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
+                                    onPressed: () async {
+                                      await Navigator.push(
                                         context,
                                         PageTransition(
                                           type: PageTransitionType.rightToLeft,
                                           child: FavoritePage(),
                                         ),
                                       );
+                                      setState(() {
+                                        getIcon(currentIndex);
+                                      });
                                     },
                                     icon: Icon(
                                       Icons.open_in_new,
@@ -346,16 +417,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           /* Menu icon tıklandığında kategori sayfasını açarsın */
           IconButton(
-              onPressed: () {
+              onPressed: () async {
+                String kategori = await Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeft,
+                    child: CategoryPage(),
+                  ),
+                );
+                print("main kategori ${kategori}");
                 setState(() {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: CategoryPage(),
-                    ),
-                  );
+                  kategoriName = kategori;
                 });
+                print("main kategoriName ${kategoriName}");
               },
               icon: ImageIcon(
                 AssetImage(
@@ -414,10 +488,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       ),
                       onPressed: () {
                         debugPrint("TEMALAR");
-                        kategoriName == "";
+                        temaName == "";
 
                         setState(() {
-                          kategoriName = "tema";
+                          temaName = "tema";
                         });
                       },
                       child: const Text(
@@ -430,10 +504,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         textStyle: const TextStyle(fontSize: 20),
                       ),
                       onPressed: () {
-                        kategoriName == "";
+                        temaName == "";
 
                         setState(() {
-                          kategoriName = "canli";
+                          temaName = "canli";
                         });
                         debugPrint("Canlı");
                       },
@@ -447,10 +521,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         textStyle: const TextStyle(fontSize: 20),
                       ),
                       onPressed: () {
-                        kategoriName == "";
+                        temaName == "";
                         debugPrint("SESLER");
                         setState(() {
-                          kategoriName = "sesler";
+                          temaName = "sesler";
                         });
                       },
                       child: const Text(
@@ -463,10 +537,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         textStyle: const TextStyle(fontSize: 20),
                       ),
                       onPressed: () {
-                        kategoriName == "";
+                        temaName == "";
 
                         setState(() {
-                          kategoriName = "font";
+                          temaName = "font";
                         });
                       },
                       child: const Text(
@@ -487,21 +561,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         /* Item Count temaname göre item count length*/
-                        itemCount: kategoriName == "tema"
+                        itemCount: temaName == "tema"
                             ? snapshot.data!.tema.length
-                            : kategoriName == "canli"
+                            : temaName == "canli"
                                 ? snapshot.data!.canli.length
-                                : kategoriName == "sesler"
+                                : temaName == "sesler"
                                     ? snapshot.data!.sesler.length
-                                    : kategoriName == "font"
+                                    : temaName == "font"
                                         ? fontName.length
                                         : 0, // Burada 0 olarak setlenmiştir, değişebilir.
                         /* -------------- ---------------- */
 
                         itemBuilder: (context, index) {
                           /* tema naemi tema veya canlıysa gelen seçenekler */
-                          if (kategoriName == "tema" ||
-                              kategoriName == "canli") {
+                          if (temaName == "tema" || temaName == "canli") {
                             MyTheme tema = snapshot.data!.tema[index];
                             MyTheme canli = snapshot.data!.canli[index];
                             return Padding(
@@ -513,7 +586,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
-                                          kategoriName == "tema"
+                                          temaName == "tema"
                                               ? tema.imgUrl
                                               : canli.imgUrl,
                                         ),
@@ -526,7 +599,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     left: 25,
                                     child: Center(
                                       child: Text(
-                                        kategoriName == "tema"
+                                        temaName == "tema"
                                             ? tema.photoAciklama
                                             : canli.photoAciklama,
                                         style: TextStyle(
@@ -539,7 +612,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               ),
                             );
                             /* ----------------------------- */
-                          } else if (kategoriName == "sesler") {
+                          } else if (temaName == "sesler") {
                             MyTheme sesler = snapshot.data!.sesler[index];
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -565,7 +638,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 )
                               ],
                             );
-                          } else if (kategoriName == "font") {
+                          } else if (temaName == "font") {
                             return Center(
                               child: Container(
                                 width: 120,

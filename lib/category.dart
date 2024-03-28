@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mor_motti_01/jsonModel.dart';
 import 'package:mor_motti_01/main.dart';
-import 'package:page_transition/page_transition.dart';
 
 class CategoryPage extends StatefulWidget {
-  const CategoryPage({super.key});
+  const CategoryPage({
+    super.key,
+  });
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();
@@ -15,7 +16,7 @@ class CategoryPage extends StatefulWidget {
 
 class _CategoryPageState extends State<CategoryPage> {
   late Future<MyData> futureData;
-
+  var kategoriNamee = "kategoriName1";
   @override
   void initState() {
     super.initState();
@@ -34,12 +35,9 @@ class _CategoryPageState extends State<CategoryPage> {
           leading: IconButton(
             onPressed: () {
               setState(() {
-                Navigator.push(
+                Navigator.pop(
                   context,
-                  PageTransition(
-                    type: PageTransitionType.rightToLeft,
-                    child: MainPage(),
-                  ),
+                  kategoriNamee,
                 );
               });
             },
@@ -76,81 +74,91 @@ class _CategoryPageState extends State<CategoryPage> {
                             itemCount: snapshot.data!.kategori.length,
                             itemBuilder: (BuildContext context, int index) {
                               MyTheme kategori = snapshot.data!.kategori[index];
-
                               return Padding(
                                 padding: EdgeInsets.all(8.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.white),
-                                  height: 125,
-                                  width: 100,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 120,
-                                            height: 125,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  bottomLeft:
-                                                      Radius.circular(10)),
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    '${kategori.imgUrl}'),
-                                                fit: BoxFit.cover,
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      kategoriNamee = kategori.name;
+
+                                      print(kategoriNamee);
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.white),
+                                    height: 125,
+                                    width: 100,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 120,
+                                              height: 125,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(10),
+                                                    bottomLeft:
+                                                        Radius.circular(10)),
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                      '${kategori.imgUrl}'),
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            4.0),
-                                                    child: Container(
-                                                      child: Text(
-                                                        '${kategori.name}',
+                                            Expanded(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              4.0),
+                                                      child: Container(
+                                                        child: Text(
+                                                          '${kategori.name}',
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            4.0),
-                                                    child: Text(
-                                                      "${kategori.aciklama}",
-                                                    ),
-                                                  )
-                                                ],
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              4.0),
+                                                      child: Text(
+                                                        "${kategori.aciklama}",
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Icon(
-                                                Icons.check_circle_rounded),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Icon(
+                                                  Icons.check_circle_rounded),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
@@ -169,7 +177,12 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
               /* Kaydet Butonu */
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(
+                    context,
+                    kategoriNamee,
+                  );
+                },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 20),
