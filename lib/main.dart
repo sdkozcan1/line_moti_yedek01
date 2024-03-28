@@ -69,7 +69,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     'Arvo',
     'Pacifico'
   ];
-
+  var imgURL = "assets/img/pexels-mark-yu-18178746.jpg";
   @override
   void initState() {
     super.initState();
@@ -99,7 +99,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 /* ---------------------- mix Text -----------*/
   mixText() {
     setState(() {
-      String currentCategory = Textlist[currentIndex]["kategori"];
       int categoryLength =
           Textlist.where((item) => item["kategori"] == kategoriName).length;
       print(Textlist.where((item) => item["kategori"] == kategoriName));
@@ -154,6 +153,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
 /* ------------- ----------- ------  */
+  void data() {
+    DateTime now = DateTime.now();
+    String formattedDate =
+        "${_twoDigits(now.year)}-${_twoDigits(now.month)}-${_twoDigits(now.day)}";
+
+    print("Şu anki tarih: $formattedDate");
+  }
+
+  String _twoDigits(int n) {
+    if (n >= 10) return "$n";
+    return "0$n";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +181,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               height: screenSize.height,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/img/pexels-mark-yu-18178746.jpg"),
+                  image: AssetImage(imgURL),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -295,11 +306,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           height: 300,
                           child: GestureDetector(
                             onLongPressUp: () {
-                              controller.forward();
+/*                               controller.forward();
+ */
                               onReverse();
                             },
                             onLongPress: () {
-                              controller.reverse();
+/*                               controller.reverse();
+ */
                               onForward();
                             },
                             child: Lottie.asset(
@@ -318,6 +331,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                   /* Motivasyon textini değiştiren fonksiyon */
                                   /*    controller.reset();
                                   controller.forward(); */
+                                  data();
                                   mixText();
                                 });
                               },
@@ -579,36 +593,56 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             MyTheme canli = snapshot.data!.canli[index];
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
+                              child: InkWell(
+                                onTap: () {
+                                  if (temaName == "tema") {
+                                    setState(() {
+                                      imgURL = tema.imgUrl;
+                                    });
+                                    print(imgURL);
+                                  } else if (temaName == "canli") {
+                                    setState(() {
+                                      imgURL = canli.imgUrl;
+                                    });
+                                    print(imgURL);
+                                  } else {
+                                    setState(() {
+                                      imgURL =
+                                          "assets/img/pexels-mark-yu-18178746.jpg";
+                                    });
+                                  }
+                                },
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                            temaName == "tema"
+                                                ? tema.imgUrl
+                                                : canli.imgUrl,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 175,
+                                      left: 25,
+                                      child: Center(
+                                        child: Text(
                                           temaName == "tema"
-                                              ? tema.imgUrl
-                                              : canli.imgUrl,
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    top: 175,
-                                    left: 25,
-                                    child: Center(
-                                      child: Text(
-                                        temaName == "tema"
-                                            ? tema.photoAciklama
-                                            : canli.photoAciklama,
-                                        style: TextStyle(
-                                          color: Colors.white,
+                                              ? tema.photoAciklama
+                                              : canli.photoAciklama,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                ],
+                                    )
+                                  ],
+                                ),
                               ),
                             );
                             /* ----------------------------- */
